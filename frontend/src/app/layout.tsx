@@ -11,12 +11,13 @@ const AppLayout:React.FC<PropsWithChildren>= ({children}) =>{
         resolver:zodResolver(schema),
     })
 
-    return <FormProvider {...methods}>
-        <SidebarProvider>
+    return (<SidebarProvider>
             <AppSidebar/>
+            <FormProvider {...methods}>
             {children}
-        </SidebarProvider>
-    </FormProvider>
+            </FormProvider>
+        </SidebarProvider>)
+
 }
 
 export default AppLayout

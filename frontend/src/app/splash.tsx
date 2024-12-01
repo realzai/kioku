@@ -1,30 +1,44 @@
 import { useRouter } from "@tanstack/react-router";
 import * as React from "react";
+import { backend } from "@/lib/backend.ts";
 
-const SplashPage:React.FC = () => {
-    const router = useRouter()
-    const [loadingProgress, setLoadingProgress] = React.useState(0)
-
+const SplashPage: React.FC = () => {
+    const router = useRouter();
+    const [loadingProgress, setLoadingProgress] = React.useState(0);
 
     React.useEffect(() => {
+        async function waitBackendProcess() {
+            try {
+                const response = await backend.get("/");
+
+                console.log("RESPONSE", response);
+
+                if (response.status === 200) {
+                    setLoadingProgress(100);
+                    setTimeout(() => {
+                        router.navigate({
+                            to: "/home",
+                        });
+                    }, 1000); // Optional delay after loading completes
+                }
+            } catch (e) {
+                console.error("Error connecting to backend:", e);
+            }
+        }
+
+        waitBackendProcess();
+
         const interval = setInterval(() => {
             setLoadingProgress((prev) => {
-                const newProgress = prev + Math.random() * 15
-                return newProgress >= 100 ? 100 : newProgress
-            })
-        }, 500)
-
-        const timeout = setTimeout(() => {
-            router.navigate({
-                to:"/home"
-            })
-        }, 4000)
+                const newProgress = prev + Math.random() * 15;
+                return newProgress >= 100 ? 100 : newProgress;
+            });
+        }, 500);
 
         return () => {
-            clearInterval(interval)
-            clearTimeout(timeout)
-        }
-    }, [router])
+            clearInterval(interval);
+        };
+    }, [router]);
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4">
@@ -33,7 +47,7 @@ const SplashPage:React.FC = () => {
                     <h1 className="text-3xl font-extralight tracking-tight text-neutral-900">Wait pls</h1>
                     <p className="text-sm font-light text-neutral-500">Zai is too broke to use paid services</p>
                 </div>
-                
+
                 <div className="space-y-2 w-full">
                     <div className="h-[1px] w-full bg-neutral-100 overflow-hidden">
                         <div
@@ -48,7 +62,7 @@ const SplashPage:React.FC = () => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default SplashPage
+export default SplashPage;
