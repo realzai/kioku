@@ -1,14 +1,7 @@
 import {createFileRoute} from '@tanstack/react-router'
-import {Button} from "@/components/ui/button.tsx";
+import SplashPage from "@/app/splash.tsx";
 
 export const Route = createFileRoute('/')({
-  component: RouteComponent,
+  component: SplashPage,
 })
 
-function RouteComponent() {
-  return (
-    <div>
-      <Button>Click Me</Button>
-    </div>
-  )
-}
