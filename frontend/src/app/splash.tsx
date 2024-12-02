@@ -1,6 +1,6 @@
-import { useRouter } from "@tanstack/react-router";
+import {useRouter} from "@tanstack/react-router";
 import * as React from "react";
-import { backend } from "@/lib/backend.ts";
+import {backend} from "@/lib/backend.ts";
 
 const SplashPage: React.FC = () => {
     const router = useRouter();
@@ -26,7 +26,7 @@ const SplashPage: React.FC = () => {
             }
         }
 
-        waitBackendProcess();
+        waitBackendProcess()
 
         const interval = setInterval(() => {
             setLoadingProgress((prev) => {
