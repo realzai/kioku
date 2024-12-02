@@ -7,8 +7,6 @@ CORS(app)
 
 @app.route('/')
 def home():
-    # want to delay for 5 seconds
-    time.sleep(5)
     return jsonify({
         'message': 'Your kioku is ready!',
     })
@@ -24,3 +22,6 @@ def process():
         'message': 'Data received successfully',
         'data': data
     })
+
+if __name__ == '__main__':
+    app.run(debug=True,host='0.0.0.0')
