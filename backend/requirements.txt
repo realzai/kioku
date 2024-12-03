@@ -1,3 +1,8 @@
-Flask
-flask_cors
-groq
+flask
+flask-cors
+langchain
+qdrant-client  # or chromadb / pinecone / your vector DB
+groq  # assuming Groq API SDK
+unstructured
+python-dotenv
+clerk-sdk
