@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Database configuration (SQLite example)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example_1.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize SQLAlchemy
@@ -23,7 +23,6 @@ class UserFiles(db.Model):
 
 @app.before_request
 def create_tables():
-    db.drop_all()
     # Create tables if they don't exist
     db.create_all()
 
@@ -71,7 +70,7 @@ def get_files():
     if is_signed_in(request):
         user_id = get_user_id(request)
         user_files = UserFiles.query.filter_by(user_id=user_id).all()
-        files = [{"id": uf.id, "file_url": uf.file_url} for uf in user_files]
+        files = [{"id": uf.id, "file_url": uf.file_url,"file_name":uf.file_name} for uf in user_files]
         return jsonify(files)
     else:
         return jsonify({'error': 'Unauthorized'}), 401
