@@ -1,7 +1,8 @@
 import os
 
+
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///example_1.db'
+    SQLALCHEMY_DATABASE_URI = "sqlite:///example_1.db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     FILEBASE_ENDPOINT = os.getenv("FILEBASE_ENDPOINT")

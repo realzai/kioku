@@ -4,6 +4,7 @@ from app.models.user_file import db
 from app.routes import upload_bp, files_bp, process_bp
 from config import Config
 
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -19,8 +20,8 @@ def create_app():
     app.register_blueprint(files_bp)
     app.register_blueprint(process_bp)
 
-    @app.route('/')
+    @app.route("/")
     def home():
-        return jsonify({'message': 'Your kioku is ready!'})
+        return jsonify({"message": "Your kioku is ready!"})
 
     return app
