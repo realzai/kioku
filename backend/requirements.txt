@@ -1,8 +1,33 @@
 flask
 flask-cors
-langchain
-qdrant-client  # or chromadb / pinecone / your vector DB
-groq  # assuming Groq API SDK
-unstructured
-python-dotenv
-clerk-sdk
+Flask-SQLAlchemy
+clerk-backend-api
+boto3
+
+# Core requirements
+flask>=2.0.0
+python-dotenv>=0.19.0
+
+# LangChain and document processing
+langchain>=0.0.200
+langchain-community>=0.0.20
+unstructured>=0.7.0
+pdfminer.six>=20200517
+pypdf>=3.0.0
+
+# Embeddings and vector store
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.0  # Use faiss-gpu if you have CUDA
+
+# File type support
+docx2txt>=0.8
+openpyxl>=3.0.0  # For Excel files
+python-pptx>=0.6.0  # For PowerPoint files
+
+# Web and file handling
+requests>=2.26.0
+urllib3>=1.26.0
+
+# Additional utilities
+tqdm>=4.62.0  # For progress bars
+chardet>=4.0.0  # For encoding detection
