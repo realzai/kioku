@@ -2,17 +2,12 @@ from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 from app.models import db, UserFiles
 from app.utils import is_signed_in, get_user_id
-import boto3
 import os
 
 upload_bp = Blueprint("upload", __name__)
 
-s3 = boto3.client(
-    "s3",
-    endpoint_url=os.getenv("FILEBASE_ENDPOINT"),
-    aws_access_key_id=os.getenv("FILEBASE_ACCESS_KEY"),
-    aws_secret_access_key=os.getenv("FILEBASE_SECRET_KEY"),
-)
+UPLOAD_FOLDER = 'user_uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 @upload_bp.route("/upload", methods=["POST"])
@@ -33,12 +28,25 @@ def upload_files():
     for file in files:
         if file.filename != "":
             filename = secure_filename(file.filename)
-            s3.upload_fileobj(file, os.getenv("FILEBASE_BUCKET"), filename)
-            file_url = f"{os.getenv('FILEBASE_ENDPOINT')}/{os.getenv('FILEBASE_BUCKET')}/{filename}"
+
+            # Create user-specific subdirectory
+            user_folder = os.path.join(UPLOAD_FOLDER, str(user_id))
+            os.makedirs(user_folder, exist_ok=True)
+
+            # Save file locally
+            file_path = os.path.join(user_folder, filename)
+            file.save(file_path)
+
+            # Create relative URL path
+            file_url = f"/uploads/{user_id}/{filename}"
             uploaded_files.append(file_url)
 
+            # Store in database
             user_file = UserFiles(
-                user_id=user_id, file_url=file_url, file_name=filename
+                user_id=user_id,
+                file_url=file_url,
+                file_name=filename,
+                local_path=file_path
             )
             db.session.add(user_file)
             db.session.commit()

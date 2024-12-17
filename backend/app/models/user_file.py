@@ -8,3 +8,4 @@ class UserFiles(db.Model):
     user_id = db.Column(db.String(80), nullable=False)
     file_url = db.Column(db.String(200), nullable=False)
     file_name = db.Column(db.String(200), nullable=False)
+    local_path = db.Column(db.String(500))

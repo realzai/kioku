@@ -7,6 +7,7 @@ import requests
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
+import os
 
 process_bp = Blueprint("process", __name__)
 
@@ -38,13 +39,15 @@ def process():
         # Get user files
         user_id = get_user_id(request)
         user_files = UserFiles.query.filter_by(user_id=user_id).all()
-        file_urls = [uf.file_url for uf in user_files if uf.file_url]
 
-        if not file_urls:
-            return jsonify({"error": "No files found for this user"}), 400
+        # Get local file paths instead of URLs
+        local_files = [uf.local_path for uf in user_files if uf.local_path and os.path.exists(uf.local_path)]
+
+        if not local_files:
+            return jsonify({"error": "No valid files found for this user"}), 400
 
         # Load and split documents
-        documents = load_documents(file_urls=["https://parliamentary-turquoise-silverfish.myfilebase.com/ipfs/QmczemGDvFuCpUirQ2o45z2ibhit2zXucptMVFz7Z1nXqh?download=true&filename=funny.txt"])
+        documents = load_documents(local_files=local_files)
         if not documents:
             return jsonify({"error": "Could not load any documents"}), 400
 
@@ -60,7 +63,11 @@ def process():
         )
 
         # Create vector store
-        vectorstore = Chroma.from_documents(chunks, embedding_model)
+        vectorstore = Chroma.from_documents(
+            chunks,
+            embedding_model,
+            persist_directory=f"./chroma_db/{user_id}"  # Persist per user
+        )
         retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
         # Retrieve context

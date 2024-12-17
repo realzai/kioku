@@ -1,64 +1,61 @@
 import os
-import tempfile
-import requests
-from urllib.parse import urlparse
 from pathlib import Path
 from langchain.document_loaders import (
-    TextLoader, PyPDFLoader, WebBaseLoader,
+    TextLoader, PyPDFLoader,
     UnstructuredWordDocumentLoader,
-    UnstructuredExcelLoader
+    UnstructuredExcelLoader,
+    UnstructuredPowerPointLoader,
+    WebBaseLoader
 )
 
 
-def load_documents(file_urls=[], web_urls=[]):
+def load_documents(local_files=[], web_urls=[]):
+    """
+    Load documents from local files and web URLs
+
+    Args:
+        local_files: List of local file paths
+        web_urls: List of web page URLs
+
+    Returns:
+        List of loaded documents
+    """
     all_docs = []
 
-    # Helper function to get file extension from URL
-    def get_file_extension(url):
-        parsed = urlparse(url)
-        path = parsed.path
-        return Path(path).suffix.lower()
-
-    # Process file URLs
-    for file_url in file_urls:
+    # Process local files
+    for file_path in local_files:
         try:
-            # Download the file to a temporary location
-            response = requests.get(file_url)
-            response.raise_for_status()
-
-            # Create a temporary file
-            ext = get_file_extension(file_url)
-            with tempfile.NamedTemporaryFile(suffix=ext, delete=False) as temp_file:
-                temp_file.write(response.content)
-                temp_path = temp_file.name
+            path = Path(file_path)
+            if not path.exists():
+                print(f"⚠️ File not found: {file_path}")
+                continue
 
             # Load based on file type
-            if ext in ['.txt', '.md']:
-                loader = TextLoader(temp_path)
-            elif ext == '.pdf':
-                loader = PyPDFLoader(temp_path)
-            elif ext == '.docx':
-                loader = UnstructuredWordDocumentLoader(temp_path)
-            elif ext in ['.xlsx', '.xls']:
-                loader = UnstructuredExcelLoader(temp_path)
+            if path.suffix.lower() in ['.txt', '.md']:
+                loader = TextLoader(str(path))
+            elif path.suffix.lower() == '.pdf':
+                loader = PyPDFLoader(str(path))
+            elif path.suffix.lower() == '.docx':
+                loader = UnstructuredWordDocumentLoader(str(path))
+            elif path.suffix.lower() in ['.xlsx', '.xls']:
+                loader = UnstructuredExcelLoader(str(path))
+            elif path.suffix.lower() == '.pptx':
+                loader = UnstructuredPowerPointLoader(str(path))
             else:
-                print(f"⚠️ Skipping unsupported file type: {file_url}")
-                os.unlink(temp_path)
+                print(f"⚠️ Skipping unsupported file type: {path.name}")
                 continue
 
             # Load and add to docs
             docs = loader.load()
+            for doc in docs:
+                # Add metadata with original file path
+                doc.metadata['source'] = str(path)
             all_docs.extend(docs)
 
-            # Clean up temporary file
-            os.unlink(temp_path)
-
         except Exception as e:
-            print(f"❌ Failed to load {file_url}: {e}")
-            if 'temp_path' in locals() and os.path.exists(temp_path):
-                os.unlink(temp_path)
+            print(f"❌ Failed to load {file_path}: {e}")
 
-    # Process web URLs
+    # Process web URLs (if still needed)
     if web_urls:
         try:
             web_loader = WebBaseLoader(web_urls)
