@@ -34,3 +34,6 @@ Thumbs.db
 *.log
 tests/
 coverage/
+
+chroma_db
+user_uploads
