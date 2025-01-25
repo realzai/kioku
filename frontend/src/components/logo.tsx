@@ -3,8 +3,8 @@ import { GalleryVerticalEnd } from "lucide-react";
 
 export const Logo: React.FC = () => {
   return (
-    <div className={"flex"}>
-      <a href="#">
+    <div className={"p-2"}>
+      <a href="#" className={"flex gap-3"}>
         <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
           <GalleryVerticalEnd className="size-4" />
         </div>
