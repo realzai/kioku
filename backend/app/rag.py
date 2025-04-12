@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from langchain.document_loaders import (
     TextLoader, PyPDFLoader,

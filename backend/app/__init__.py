@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from app.models.user_file import db
 from app.routes import upload_bp, files_bp, process_bp
+from app.routes.weburl_routes import web_url_bp
 from config import Config
 
 
@@ -19,6 +20,7 @@ def create_app():
     app.register_blueprint(upload_bp)
     app.register_blueprint(files_bp)
     app.register_blueprint(process_bp)
+    app.register_blueprint(web_url_bp)
 
     @app.route("/")
     def home():
