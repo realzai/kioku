@@ -1,18 +1,24 @@
 import * as React from "react";
-import { GalleryVerticalEnd } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { SidebarMenuButton } from "./ui/sidebar";
 
 export const Logo: React.FC = () => {
   return (
-    <div className={"p-2"}>
-      <a href="#" className={"flex gap-3"}>
-        <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-          <GalleryVerticalEnd className="size-4" />
+    <SidebarMenuButton size="lg" asChild>
+      <Link to="/home">
+        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-black text-sidebar-primary-foreground">
+          <img
+            src={"/kioku.png"}
+            alt={"Kioku"}
+            width={36}
+            height={36}
+            className={"rounded-lg"}
+          />
         </div>
-        <div className="flex flex-col gap-0.5 leading-none">
-          <span className="font-medium">Documentation</span>
-          <span className="">v1.0.0</span>
+        <div className="grid flex-1 text-left leading-tight">
+          <span className={`font-semibold text-lg`}>kioku</span>
         </div>
-      </a>
-    </div>
+      </Link>
+    </SidebarMenuButton>
   );
 };
