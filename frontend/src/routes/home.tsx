@@ -11,6 +11,7 @@ import { AppSidebar } from "@/components/app-sidebar.tsx";
 import { AppHeader } from "@/components/app-header.tsx";
 import { useRouter } from "@tanstack/react-router";
 import { Container } from "@/components/ui/container.tsx";
+import { WebUrlModal } from "@/components/web-url-modal.tsx";
 
 export const Route = createFileRoute("/home")({
   component: HomePage,
@@ -61,6 +62,8 @@ function HomePage() {
           </Container>
         </SidebarInset>
       </FormProvider>
+
+      <WebUrlModal />
     </SidebarProvider>
   );
 }

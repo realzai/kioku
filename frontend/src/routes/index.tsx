@@ -10,43 +10,51 @@ function SplashPage() {
   const router = useRouter();
   const [loadingProgress, setLoadingProgress] = React.useState(0);
 
-  React.useEffect(() => {
-    async function waitBackendProcess() {
-      try {
-        const response = await backend.get("/");
+  // Constants for configuration
+  const PROGRESS_INTERVAL = 500; // in ms
+  const PROGRESS_INCREMENT = 15; // max increment per interval
+  const NAVIGATION_DELAY = 1000; // delay before navigation after loading completes
 
-        console.log("RESPONSE", response);
+  // Function to simulate backend processing
+  const waitBackendProcess = React.useCallback(async () => {
+    try {
+      const response = await backend.get("/");
 
-        if (response.status === 200) {
-          setLoadingProgress(100);
-          setTimeout(() => {
-            router.navigate({
-              to: "/home",
-            });
-          }, 1000); // Optional delay after loading completes
-        }
-      } catch (e) {
-        console.error("Error connecting to backend:", e);
+      console.log("RESPONSE", response);
+
+      if (response.status === 200) {
+        setLoadingProgress(100);
+        setTimeout(() => {
+          router.navigate({ to: "/home" });
+        }, NAVIGATION_DELAY);
       }
+    } catch (error) {
+      console.error("Error connecting to backend:", error);
     }
+  }, [router]);
 
+  // Function to update loading progress
+  const updateProgress = React.useCallback(() => {
+    setLoadingProgress((prev) => {
+      const newProgress = prev + Math.random() * PROGRESS_INCREMENT;
+      return newProgress >= 100 ? 100 : newProgress;
+    });
+  }, []);
+
+  React.useEffect(() => {
     waitBackendProcess();
 
-    const interval = setInterval(() => {
-      setLoadingProgress((prev) => {
-        const newProgress = prev + Math.random() * 15;
-        return newProgress >= 100 ? 100 : newProgress;
-      });
-    }, 500);
+    const interval = setInterval(updateProgress, PROGRESS_INTERVAL);
 
     return () => {
       clearInterval(interval);
     };
-  }, [router]);
+  }, [waitBackendProcess, updateProgress]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4">
       <div className="max-w-md space-y-12">
+        {/* Header Section */}
         <div className="space-y-2 text-center">
           <h1 className="text-3xl font-extralight tracking-tight text-neutral-900">
             Wait pls
@@ -56,6 +64,7 @@ function SplashPage() {
           </p>
         </div>
 
+        {/* Progress Bar Section */}
         <div className="space-y-2 w-full">
           <div className="h-[1px] w-full bg-neutral-100 overflow-hidden">
             <div

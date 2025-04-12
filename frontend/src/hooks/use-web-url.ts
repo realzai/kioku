@@ -9,7 +9,7 @@ const fetchUserWebUrls = async (token: string): Promise<UserWebUrl[]> => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return response.data;
+  return response.data.urls;
 };
 
 export const useWebUrls = () => {
